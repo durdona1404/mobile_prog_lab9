@@ -1,8 +1,20 @@
+import 'package:flutter/foundation.dart';
+
 class Product {
   const Product({required this.id, required this.name, required this.price});
   final String id;
   final String name;
   final double price;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Product &&
+      other.id == id &&
+      other.name == name &&
+      other.price == price;
+
+  @override
+  int get hashCode => Object.hash(id, name, price);
 }
 
 const catalog = [
@@ -20,6 +32,13 @@ class CartLine {
 
   CartLine copyWith({int? qty}) =>
       CartLine(product: product, qty: qty ?? this.qty);
+
+  @override
+  bool operator ==(Object other) =>
+      other is CartLine && other.product == product && other.qty == qty;
+
+  @override
+  int get hashCode => Object.hash(product, qty);
 }
 
 extension CartLines on List<CartLine> {
@@ -94,5 +113,25 @@ class CartState {
     checkoutError: identical(checkoutError, _unset)
         ? this.checkoutError
         : checkoutError as String?,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is CartState &&
+      listEquals(other.lines, lines) &&
+      other.coupon == coupon &&
+      other.couponError == couponError &&
+      other.status == status &&
+      other.orderId == orderId &&
+      other.checkoutError == checkoutError;
+
+  @override
+  int get hashCode => Object.hash(
+    Object.hashAll(lines),
+    coupon,
+    couponError,
+    status,
+    orderId,
+    checkoutError,
   );
 }
