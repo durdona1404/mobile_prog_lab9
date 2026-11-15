@@ -6,7 +6,12 @@ import 'cubit/cart_page_cubit.dart';
 import 'riverpod/cart_page_riverpod.dart';
 import 'setstate/cart_page_setstate.dart';
 
-void main() => runApp(const ProviderScope(child: CartApp()));
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bloc/cart_observer.dart';
+void main() {
+  Bloc.observer = CartObserver();
+  runApp(const ProviderScope(child: CartApp()));
+}
 
 class CartApp extends StatelessWidget {
   const CartApp({super.key});

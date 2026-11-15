@@ -73,6 +73,7 @@ class CartState {
     this.orderId,
     this.checkoutError,
     this.canUndo = false,
+    this.history = const [],
   });
 
   final List<CartLine> lines;
@@ -82,6 +83,7 @@ class CartState {
   final String? orderId;
   final String? checkoutError;
   final bool canUndo;
+  final List<CartState> history;
 
   int get itemCount => lines.itemCount;
   double get subtotal => lines.subtotal;
@@ -96,6 +98,7 @@ class CartState {
     Object? orderId = _unset,
     Object? checkoutError = _unset,
     bool? canUndo,
+    List<CartState>? history,
   }) =>
       CartState(
         lines: lines ?? this.lines,
@@ -106,6 +109,7 @@ class CartState {
         checkoutError:
             identical(checkoutError, _unset) ? this.checkoutError : checkoutError as String?,
         canUndo: canUndo ?? this.canUndo,
+        history: history ?? this.history,
       );
 
   @override
@@ -117,7 +121,8 @@ class CartState {
       other.status == status &&
       other.orderId == orderId &&
       other.checkoutError == checkoutError &&
-      other.canUndo == canUndo;
+      other.canUndo == canUndo &&
+      listEquals(other.history, history);
 
   @override
   int get hashCode => Object.hash(
@@ -128,5 +133,6 @@ class CartState {
         orderId,
         checkoutError,
         canUndo,
+        Object.hashAll(history),
       );
 }
