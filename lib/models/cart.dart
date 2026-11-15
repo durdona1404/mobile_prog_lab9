@@ -8,10 +8,7 @@ class Product {
 
   @override
   bool operator ==(Object other) =>
-      other is Product &&
-      other.id == id &&
-      other.name == name &&
-      other.price == price;
+      other is Product && other.id == id && other.name == name && other.price == price;
 
   @override
   int get hashCode => Object.hash(id, name, price);
@@ -30,8 +27,7 @@ class CartLine {
 
   double get subtotal => product.price * qty;
 
-  CartLine copyWith({int? qty}) =>
-      CartLine(product: product, qty: qty ?? this.qty);
+  CartLine copyWith({int? qty}) => CartLine(product: product, qty: qty ?? this.qty);
 
   @override
   bool operator ==(Object other) =>
@@ -45,24 +41,19 @@ extension CartLines on List<CartLine> {
   List<CartLine> withProduct(Product p) {
     final i = indexWhere((l) => l.product.id == p.id);
     if (i == -1) return [...this, CartLine(product: p, qty: 1)];
-    return [
-      for (final l in this)
-        l.product.id == p.id ? l.copyWith(qty: l.qty + 1) : l,
-    ];
+    return [for (final l in this) l.product.id == p.id ? l.copyWith(qty: l.qty + 1) : l];
   }
 
-  List<CartLine> without(String productId) => [
-    for (final l in this)
-      if (l.product.id != productId) l,
-  ];
+  List<CartLine> without(String productId) =>
+      [for (final l in this) if (l.product.id != productId) l];
 
   List<CartLine> changeQty(String id, int delta) => [
-    for (final l in this)
-      if (l.product.id != id)
-        l
-      else if (l.qty + delta > 0)
-        l.copyWith(qty: l.qty + delta),
-  ];
+        for (final l in this)
+          if (l.product.id != id)
+            l
+          else if (l.qty + delta > 0)
+            l.copyWith(qty: l.qty + delta),
+      ];
 
   double get subtotal => fold(0, (s, l) => s + l.subtotal);
 
@@ -81,6 +72,7 @@ class CartState {
     this.status = CheckoutStatus.idle,
     this.orderId,
     this.checkoutError,
+    this.canUndo = false,
   });
 
   final List<CartLine> lines;
@@ -89,6 +81,7 @@ class CartState {
   final CheckoutStatus status;
   final String? orderId;
   final String? checkoutError;
+  final bool canUndo;
 
   int get itemCount => lines.itemCount;
   double get subtotal => lines.subtotal;
@@ -102,18 +95,18 @@ class CartState {
     CheckoutStatus? status,
     Object? orderId = _unset,
     Object? checkoutError = _unset,
-  }) => CartState(
-    lines: lines ?? this.lines,
-    coupon: identical(coupon, _unset) ? this.coupon : coupon as String?,
-    couponError: identical(couponError, _unset)
-        ? this.couponError
-        : couponError as String?,
-    status: status ?? this.status,
-    orderId: identical(orderId, _unset) ? this.orderId : orderId as String?,
-    checkoutError: identical(checkoutError, _unset)
-        ? this.checkoutError
-        : checkoutError as String?,
-  );
+    bool? canUndo,
+  }) =>
+      CartState(
+        lines: lines ?? this.lines,
+        coupon: identical(coupon, _unset) ? this.coupon : coupon as String?,
+        couponError: identical(couponError, _unset) ? this.couponError : couponError as String?,
+        status: status ?? this.status,
+        orderId: identical(orderId, _unset) ? this.orderId : orderId as String?,
+        checkoutError:
+            identical(checkoutError, _unset) ? this.checkoutError : checkoutError as String?,
+        canUndo: canUndo ?? this.canUndo,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -123,15 +116,17 @@ class CartState {
       other.couponError == couponError &&
       other.status == status &&
       other.orderId == orderId &&
-      other.checkoutError == checkoutError;
+      other.checkoutError == checkoutError &&
+      other.canUndo == canUndo;
 
   @override
   int get hashCode => Object.hash(
-    Object.hashAll(lines),
-    coupon,
-    couponError,
-    status,
-    orderId,
-    checkoutError,
-  );
+        Object.hashAll(lines),
+        coupon,
+        couponError,
+        status,
+        orderId,
+        checkoutError,
+        canUndo,
+      );
 }
