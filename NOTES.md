@@ -4,7 +4,7 @@ Tags: p1-shared, p2-setstate, p3-riverpod, p4-cubit, p5-bloc
 
 CHECKPOINT QUESTIONS
 
-Where does the state live and when does it die?
+1. Where does the state live and when does it die?
 
 setState: in a field of the State object. It dies when the page is popped, and on hot restart.
 
@@ -14,19 +14,19 @@ Cubit: in the Cubit instance owned by BlocProvider. It dies when the page is pop
 
 Bloc: same as Cubit.
 
-What is the single public mutation API? Which style has none?
+2. What is the single public mutation API? Which style has none?
 
 Notifier: its public methods. Cubit: its public methods that call emit. Bloc: add(event). setState has none, because the state is a plain field and any code in the State class can change it.
 
-Mapping between the styles.
+3. Mapping between the styles.
 
 ref.watch is BlocBuilder, ref.read is context.read, ref.listen is BlocListener, select is buildWhen or BlocSelector. setState is the baseline where the widget is both holder and subscriber, so the whole build re-runs.
 
-Why skip notifying when the state is equal, and what two things must you do to CartState?
+4. Why skip notifying when the state is equal, and what two things must you do to CartState?
 
 It avoids pointless rebuilds. We must override == and hashCode together, and compare lines by value (listEquals, with == on CartLine and Product).
 
-Which guard after the await?
+5. Which guard after the await?
 
 setState needs mounted (the State may be disposed). Riverpod needs nothing (the notifier lives in the container, not in a widget). Cubit needs isClosed (emit after close throws). Bloc needs emit.isDone (the handler’s emit is no longer valid). They differ because each style’s state has a different owner and lifetime.
 
